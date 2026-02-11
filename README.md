@@ -1,1 +1,0 @@
-# gen-ai-hackathon-SPEC-404-error
