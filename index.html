@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandCraft — AI Branding Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --overlay: rgba(0, 0, 0, 0.5);
+        }
+
+        :root[data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --overlay: rgba(0, 0, 0, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header with Theme Toggle */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-icon {
+            font-size: 20px;
+        }
+
+        .theme-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            padding: 80px 0;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 48px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            margin-bottom: 32px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--accent);
+            color: white;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 1.0625rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input,
+        .select,
+        .textarea {
+            width: 100%;
+            padding: 16px 20px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 16px;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .input:focus,
+        .select:focus,
+        .textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Pill Selection */
+        .pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pill {
+            position: relative;
+        }
+
+        .pill input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .pill-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border);
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .pill input:checked + .pill-label {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .pill-label:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Button */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Name Cards */
+        .name-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .name-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .name-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .name-card.selected {
+            border-color: var(--accent);
+            border-width: 3px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
+        }
+
+        .name-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .name-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .name-score {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--accent);
+            color: white;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .name-category {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Package Sections */
+        .package {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .package-header {
+            margin-bottom: 32px;
+        }
+
+        .package-title {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .package-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Alert */
+        .alert {
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Story Content */
+        .story-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+        }
+
+        .statement {
+            background: var(--bg-primary);
+            padding: 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .statement-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .statement-text {
+            font-size: 17px;
+            line-height: 1.7;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Values */
+        .value-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .value-item {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .value-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .value-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Color Palette */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .color-card {
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow);
+            border: 2px solid var(--border);
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px var(--shadow);
+        }
+
+        .color-preview {
+            height: 120px;
+        }
+
+        .color-info {
+            padding: 16px;
+            background: var(--bg-secondary);
+        }
+
+        .color-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .color-hex {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .color-usage {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* Taglines */
+        .tagline-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .tagline-card {
+            background: var(--bg-primary);
+            padding: 24px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .tagline-text {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .tagline-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Logo Prompts */
+        .logo-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .logo-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .logo-header {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-type {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .logo-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .logo-body {
+            padding: 20px;
+        }
+
+        .logo-prompt {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+
+        /* Social Posts */
+        .social-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .social-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .post-content {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .hashtag {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 24px;
+            }
+
+            .card {
+                padding: 32px 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .name-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .color-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-stats {
+                gap: 32px;
+            }
+        }
+
+        /* Expandable Section */
+        .expandable {
+            margin-top: 16px;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .expand-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .expand-content.open {
+            max-height: 2000px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">BrandCraft </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-icon" id="theme-icon">🌙</span>
+                    <span class="theme-label" id="theme-label">Dark Mode</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="container">
+            <h1 class="hero-title">Create Your Ultimate Brand Identity</h1>
+            <p class="hero-subtitle">Ultra-Advanced AI • Professional Quality • Complete Package</p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">20+</span>
+                    <span class="stat-label">Brand Names</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Quality Metrics</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Assets Generated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Input Form -->
+        <div class="card" id="input-section">
+            <div class="card-header">
+                <span class="badge">Step 1</span>
+                <h2 class="card-title">Define Your Brand Foundation</h2>
+                <p class="card-desc">Provide detailed information to generate a comprehensive, professional brand identity.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="label">Business Domain *</label>
+                    <input type="text" id="domain" class="input" placeholder="Technology, Fashion, Healthcare...">
+                </div>
+                <div class="form-group">
+                    <label class="label">Target Audience *</label>
+                    <select id="audience" class="select">
+                        <option value="">Select your audience...</option>
+                        <option value="Startups & Entrepreneurs">Startups & Entrepreneurs</option>
+                        <option value="Small Business Owners">Small Business Owners</option>
+                        <option value="Enterprise Companies">Enterprise Companies</option>
+                        <option value="Millennials (25-40)">Millennials (25-40)</option>
+                        <option value="Gen Z (18-24)">Gen Z (18-24)</option>
+                        <option value="Baby Boomers (55+)">Baby Boomers (55+)</option>
+                        <option value="Young Professionals">Young Professionals</option>
+                        <option value="Creative Professionals">Creative Professionals</option>
+                        <option value="Tech-Savvy Consumers">Tech-Savvy Consumers</option>
+                        <option value="Luxury Consumers">Luxury Consumers</option>
+                        <option value="Budget-Conscious Buyers">Budget-Conscious Buyers</option>
+                        <option value="B2B Decision Makers">B2B Decision Makers</option>
+                        <option value="General Public">General Public</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="label">Company Size</label>
+                    <select id="company-size" class="select">
+                        <option value="">Select size...</option>
+                        <option value="Solo/Freelancer">Solo/Freelancer</option>
+                        <option value="Startup (1-10)">Startup (1-10)</option>
+                        <option value="Small (11-50)">Small (11-50)</option>
+                        <option value="Medium (51-200)">Medium (51-200)</option>
+                        <option value="Large (200+)">Large (200+)</option>
+                        <option value="Enterprise (1000+)">Enterprise (1000+)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label">Target Market</label>
+                    <select id="target-market" class="select">
+                        <option value="">Select market...</option>
+                        <option value="Local">Local</option>
+                        <option value="Regional">Regional</option>
+                        <option value="National">National</option>
+                        <option value="Global">Global</option>
+                        <option value="North America">North America</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Asia Pacific">Asia Pacific</option>
+                        <option value="Latin America">Latin America</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Unique Value Proposition</label>
+                <input type="text" id="unique-value" class="input" placeholder="What makes your brand different and special?">
+            </div>
+
+            <div class="form-group">
+                <label class="label">Brand Personality Traits *</label>
+                <div class="pill-container">
+                    <div class="pill">
+                        <input type="checkbox" id="professional" value="professional">
+                        <label for="professional" class="pill-label">Professional</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="innovative" value="innovative">
+                        <label for="innovative" class="pill-label">Innovative</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="trustworthy" value="trustworthy">
+                        <label for="trustworthy" class="pill-label">Trustworthy</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="creative" value="creative">
+                        <label for="creative" class="pill-label">Creative</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="playful" value="playful">
+                        <label for="playful" class="pill-label">Playful</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="bold" value="bold">
+                        <label for="bold" class="pill-label">Bold</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="elegant" value="elegant">
+                        <label for="elegant" class="pill-label">Elegant</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Brand Tone *</label>
+                <select id="tone" class="select">
+                    <option value="">Select your brand voice...</option>
+                    <option value="formal">Formal & Professional</option>
+                    <option value="casual">Casual & Relaxed</option>
+                    <option value="friendly">Friendly & Warm</option>
+                    <option value="authoritative">Authoritative & Expert</option>
+                    <option value="inspiring">Inspiring & Motivational</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Emotional Goals *</label>
+                <div class="pill-container">
+                    <div class="pill">
+                        <input type="checkbox" id="joy" value="joy">
+                        <label for="joy" class="pill-label">Joy</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="trust" value="trust">
+                        <label for="trust" class="pill-label">Trust</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="innovation" value="innovation">
+                        <label for="innovation" class="pill-label">Innovation</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="calm" value="calm">
+                        <label for="calm" class="pill-label">Calm</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="energy" value="energy">
+                        <label for="energy" class="pill-label">Energy</label>
+                    </div>
+                    <div class="pill">
+                        <input type="checkbox" id="confidence" value="confidence">
+                        <label for="confidence" class="pill-label">Confidence</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="generateBrand()">
+                <span>✨</span>
+                <span>Generate Brand Identity</span>
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8000/api';
+        let brandId = null;
+        let currentTheme = 'light';
+
+        // Theme Toggle
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            const label = document.getElementById('theme-label');
+            
+            if (currentTheme === 'dark') {
+                icon.textContent = '☀️';
+                label.textContent = 'Light Mode';
+            } else {
+                icon.textContent = '🌙';
+                label.textContent = 'Dark Mode';
+            }
+            
+            localStorage.setItem('theme', currentTheme);
+        }
+
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                toggleTheme();
+            }
+        });
+
+        function getChecked(selector) {
+            return Array.from(document.querySelectorAll(selector + ':checked')).map(el => el.value);
+        }
+
+        async function generateBrand() {
+            const domain = document.getElementById('domain').value;
+            const audience = document.getElementById('audience').value;
+            const uniqueValue = document.getElementById('unique-value').value;
+            const companySize = document.getElementById('company-size').value;
+            const targetMarket = document.getElementById('target-market').value;
+            const personality = getChecked('.pill input').filter(v => 
+                ['professional', 'innovative', 'trustworthy', 'creative', 'playful', 'bold', 'elegant'].includes(v));
+            const tone = document.getElementById('tone').value;
+            const emotions = getChecked('.pill input').filter(v =>
+                ['joy', 'trust', 'innovation', 'calm', 'energy', 'confidence'].includes(v));
+
+            if (!domain || !audience || !personality.length || !tone || !emotions.length) {
+                alert('⚠️ Please fill in all required fields (marked with *)');
+                return;
+            }
+
+            showLoading('🎨 Generating your ultra-advanced brand identity...');
+
+            try {
+                const ctx = await fetch(API + '/brand/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        domain, target_audience: audience, personality_traits: personality,
+                        tone, emotional_goals: emotions, unique_value: uniqueValue,
+                        company_size: companySize, target_market: targetMarket
+                    })
+                });
+                const data = await ctx.json();
+                brandId = data.brand_id;
+
+                const names = await fetch(API + '/brand/' + brandId + '/names?count=20', {method: 'POST'});
+                const namesData = await names.json();
+                showNames(namesData.names);
+            } catch (e) {
+                console.error(e);
+                alert('❌ Error: Please ensure server is running on port 8000');
+            }
+        }
+
+        function showNames(names) {
+            let html = '<div class="card"><div class="card-header">' +
+                '<span class="badge">Step 2</span>' +
+                '<h2 class="card-title">Choose Your Perfect Brand Name</h2>' +
+                '<p class="card-desc">20 ultra-intelligent names generated with 6 quality metrics each</p></div>' +
+                '<div class="name-grid">';
+
+            names.forEach(n => {
+                html += '<div class="name-card" onclick="selectName(\'' + n.name + '\')">' +
+                    '<h3 class="name-title">' + n.name + '</h3>' +
+                    '<div class="name-category">' + n.category + '</div>' +
+                    '<div class="name-score">⭐ Score: ' + n.score + '</div>' +
+                    '<div class="metrics">' +
+                    '<div class="metric"><div class="metric-value">' + Math.round(n.memorability) + '</div>' +
+                    '<div class="metric-label">Memory</div></div>' +
+                    '<div class="metric"><div class="metric-value">' + Math.round(n.uniqueness) + '</div>' +
+                    '<div class="metric-label">Unique</div></div>' +
+                    '<div class="metric"><div class="metric-value">' + Math.round(n.brandability) + '</div>' +
+                    '<div class="metric-label">Brand</div></div></div></div>';
+            });
+
+            html += '</div></div>';
+            document.getElementById('results').innerHTML = html;
+            document.getElementById('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        async function selectName(name) {
+            document.querySelectorAll('.name-card').forEach(c => c.classList.remove('selected'));
+            event.target.closest('.name-card').classList.add('selected');
+
+            showLoading('🚀 Creating your complete ultra-advanced brand package...');
+
+            try {
+                await fetch(API + '/brand/' + brandId + '/select-name?name=' + name, {method: 'POST'});
+                const pkg = await fetch(API + '/brand/' + brandId + '/complete', {method: 'POST'});
+                const data = await pkg.json();
+                showPackage(data);
+            } catch (e) {
+                console.error(e);
+                alert('❌ Error generating package');
+            }
+        }
+
+        function showPackage(d) {
+            let html = '<div class="alert"><span style="font-size: 28px;">🎉</span>' +
+                '<div><strong>Success!</strong> Your complete ultra-advanced brand package for <strong>' + d.brand_name + '</strong> is ready!</div></div>';
+
+            // Brand Story
+            html += '<div class="package"><div class="package-header">' +
+                '<h2 class="package-title">📖 Brand Story</h2>' +
+                '<p class="package-subtitle">Your compelling brand narrative</p></div>' +
+                '<p class="story-text">' + d.brand_story + '</p>' +
+                '<div class="statement"><div class="statement-label">Mission Statement</div>' +
+                '<p class="statement-text">' + d.mission + '</p></div>' +
+                '<div class="statement"><div class="statement-label">Vision Statement</div>' +
+                '<p class="statement-text">' + d.vision + '</p></div>';
+
+            if (d.value_proposition) {
+                html += '<div class="statement"><div class="statement-label">Value Proposition</div>' +
+                    '<p class="statement-text">' + d.value_proposition + '</p></div>';
+            }
+
+            html += '<h3 style="margin: 32px 0 20px; font-size: 24px;">Core Values</h3><div class="value-grid">';
+            if (d.core_values) {
+                d.core_values.forEach(v => {
+                    html += '<div class="value-item"><div class="value-name">' + v.value + '</div>' +
+                        '<p class="value-desc">' + v.description + '</p></div>';
+                });
+            }
+            html += '</div></div>';
+
+            // Brand Voice Guide
+            if (d.brand_voice_guide) {
+                html += '<div class="package"><div class="package-header">' +
+                    '<h2 class="package-title">🎤 Brand Voice Guide</h2></div>' +
+                    '<div class="statement"><div class="statement-label">Do\'s</div>' +
+                    '<ul style="margin-left: 20px; color: var(--text-primary);">';
+                d.brand_voice_guide.do.forEach(item => {
+                    html += '<li style="margin: 8px 0;">' + item + '</li>';
+                });
+                html += '</ul></div><div class="statement"><div class="statement-label">Don\'ts</div>' +
+                    '<ul style="margin-left: 20px; color: var(--text-primary);">';
+                d.brand_voice_guide.dont.forEach(item => {
+                    html += '<li style="margin: 8px 0;">' + item + '</li>';
+                });
+                html += '</ul></div><div class="statement"><div class="statement-label">Example</div>' +
+                    '<p class="statement-text">' + d.brand_voice_guide.example + '</p></div></div>';
+            }
+
+            // Color Palette
+            html += '<div class="package"><div class="package-header">' +
+                '<h2 class="package-title">🎨 Color Palette</h2>' +
+                '<p class="package-subtitle">Professional colors with usage guidelines</p></div>' +
+                '<div class="color-grid">';
+
+            d.color_palette.forEach(c => {
+                html += '<div class="color-card" onclick="copyColor(\'' + c.hex + '\')">' +
+                    '<div class="color-preview" style="background:' + c.hex + '"></div>' +
+                    '<div class="color-info"><div class="color-name">' + c.name + '</div>' +
+                    '<div class="color-hex">' + c.hex + '</div>' +
+                    '<div class="color-usage">' + c.usage + '</div></div></div>';
+            });
+
+            html += '</div></div>';
+
+            // Taglines
+            html += '<div class="package"><div class="package-header">' +
+                '<h2 class="package-title">💬 Brand Taglines</h2>' +
+                '<p class="package-subtitle">10 professional taglines with metrics</p></div>' +
+                '<div class="tagline-grid">';
+
+            d.taglines.forEach(t => {
+                html += '<div class="tagline-card"><div class="tagline-text">"' + t.tagline + '"</div>' +
+                    '<div class="tagline-meta"><span>Style: ' + t.style + '</span>' +
+                    '<span>Score: ' + t.score + '</span><span>' + t.target_resonance + ' Resonance</span></div></div>';
+            });
+
+            html += '</div></div>';
+
+            // Logo Prompts
+            html += '<div class="package"><div class="package-header">' +
+                '<h2 class="package-title">🎯 Logo Design System</h2>' +
+                '<p class="package-subtitle">5 professional logo variations with detailed prompts</p></div>' +
+                '<div class="logo-grid">';
+
+            d.logo_prompts.forEach(p => {
+                html += '<div class="logo-card"><div class="logo-header">' +
+                    '<div class="logo-type">' + p.type + '</div>' +
+                    '<div class="logo-desc">' + p.description + '</div></div>' +
+                    '<div class="logo-body"><strong style="color: var(--text-primary);">Use Case:</strong> ' + p.use_case +
+                    '<div class="logo-prompt">' + p.prompt + '</div>' +
+                    '<strong style="color: var(--text-primary);">Negative Prompt:</strong>' +
+                    '<div class="logo-prompt">' + p.negative_prompt + '</div></div></div>';
+            });
+
+            html += '</div></div>';
+
+            // Social Content with Tabs
+            html += '<div class="package"><div class="package-header">' +
+                '<h2 class="package-title">📱 Social Media Content</h2>' +
+                '<p class="package-subtitle">Platform-optimized content for all major channels</p></div>' +
+                '<div class="tabs">';
+
+            const platforms = Object.keys(d.social_content);
+            platforms.forEach((platform, idx) => {
+                html += '<button class="tab' + (idx === 0 ? ' active' : '') + '" onclick="switchTab(\'' + platform + '\')">' +
+                    platform.charAt(0).toUpperCase() + platform.slice(1) + '</button>';
+            });
+
+            html += '</div>';
+
+            platforms.forEach((platform, idx) => {
+                html += '<div id="tab-' + platform + '" class="tab-content' + (idx === 0 ? ' active' : '') + '">' +
+                    '<div class="social-grid">';
+                d.social_content[platform].forEach(post => {
+                    html += '<div class="social-card"><div class="platform-badge">' + post.content_type + '</div>' +
+                        '<p class="post-content">' + post.content + '</p>' +
+                        '<div class="hashtags">';
+                    post.hashtags.forEach(tag => {
+                        html += '<span class="hashtag">' + tag + '</span>';
+                    });
+                    html += '</div><div class="expandable"><button class="expand-btn" onclick="toggleExpand(this)">' +
+                        '<span>▼</span> Show Details</button><div class="expand-content">' +
+                        '<div style="margin-top: 12px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">' +
+                        '<strong style="color: var(--text-primary);">Optimal Time:</strong> ' + post.optimal_time +
+                        '<br><strong style="color: var(--text-primary); margin-top: 8px; display: block;">Engagement Tips:</strong>' +
+                        '<ul style="margin: 8px 0 0 20px; color: var(--text-secondary);">';
+                    post.engagement_tips.forEach(tip => {
+                        html += '<li style="margin: 4px 0;">' + tip + '</li>';
+                    });
+                    html += '</ul></div></div></div></div>';
+                });
+                html += '</div></div>';
+            });
+
+            html += '</div>';
+
+            document.getElementById('results').innerHTML += html;
+        }
+
+        function switchTab(platform) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + platform).classList.add('active');
+        }
+
+        function toggleExpand(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('span');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.textContent = '▼';
+                btn.lastChild.textContent = ' Show Details';
+            } else {
+                content.classList.add('open');
+                icon.textContent = '▲';
+                btn.lastChild.textContent = ' Hide Details';
+            }
+        }
+
+        function showLoading(msg) {
+            document.getElementById('results').innerHTML = 
+                '<div class="loading"><div class="spinner"></div><p class="loading-text">' + msg + '</p></div>';
+        }
+
+        function copyColor(hex) {
+            navigator.clipboard.writeText(hex);
+            alert('✓ Copied ' + hex + ' to clipboard!');
+        }
+    </script>
+</body>
+</html>
